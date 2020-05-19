@@ -462,7 +462,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: main
-        image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.2.0
+        image: mhraymundo/microservices-demo-loadgenerator
         env:
         - name: FRONTEND_ADDR
           value: "frontend:80"
@@ -701,3 +701,15 @@ spec:
     port: 9555
     targetPort: 9555
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadgenerator
+spec:
+  type: ClusterIP
+  selector:
+    app: loadgenerator
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8089

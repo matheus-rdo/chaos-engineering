@@ -93,3 +93,34 @@ spec:
   - number: 443
     name: https
     protocol: HTTPS
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: loadgenerator-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 15030
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: loadgenerator-ingress
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - loadgenerator-gateway
+  http:
+  - route:
+    - destination:
+        host: loadgenerator
+        port:
+          number: 80
