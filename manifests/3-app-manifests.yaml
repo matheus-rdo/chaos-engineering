@@ -488,6 +488,7 @@ spec:
     metadata:
       labels:
         app: currencyservice
+        version: safe
     spec:
       terminationGracePeriodSeconds: 5
       containers:
