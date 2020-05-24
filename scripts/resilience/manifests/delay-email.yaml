@@ -1,0 +1,19 @@
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: emailservice
+  namespace: default
+spec:
+  hosts:
+    - emailservice.default.svc.cluster.local
+  http:
+    - route:
+        - destination:
+            host: emailservice.default.svc.cluster.local
+            subset: safe
+          weight: 0
+        - destination:
+            host: emailservice.default.svc.cluster.local
+            subset: delay
+          weight: 100
+      timeout: 1s

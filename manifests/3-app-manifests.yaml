@@ -28,6 +28,7 @@ spec:
     metadata:
       labels:
         app: emailservice
+        version: safe
     spec:
       terminationGracePeriodSeconds: 5
       containers:

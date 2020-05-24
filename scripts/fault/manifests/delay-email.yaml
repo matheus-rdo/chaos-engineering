@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emailservice-delay
+spec:
+  selector:
+    matchLabels:
+      app: emailservice
+  template:
+    metadata:
+      labels:
+        app: emailservice
+        version: delay
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: mhraymundo/microservices-demo-email
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        # - name: DISABLE_TRACING
+        #   value: "1"
+        - name: DISABLE_PROFILER
+          value: "1"
+        - name: DELAY_SECONDS
+          value: "15"  
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:8080", "-rpc-timeout", "120000ms"]
+        livenessProbe:
+          periodSeconds: 5
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:8080", "-rpc-timeout", "120000ms"]
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: emailservice
+  namespace: default
+spec:
+  hosts:
+    - emailservice.default.svc.cluster.local
+  http:
+    - route:
+        - destination:
+            host: emailservice.default.svc.cluster.local
+            subset: safe
+          weight: 0
+        - destination:
+            host: emailservice.default.svc.cluster.local
+            subset: delay
+          weight: 100
+---
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: emailservice
+  namespace: default
+spec:
+  host: emailservice.default.svc.cluster.local
+  subsets:
+    - labels:
+        version: safe
+      name: safe
+    - labels:
+        version: delay
+      name: delay
