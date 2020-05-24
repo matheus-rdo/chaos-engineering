@@ -13,4 +13,4 @@ Explora a prática da engenharia do caos para construir uma arquitetura de um si
 
  ### Rodar no Minikube
 
- `minikube start --cpus=5 --memory 6GiB --disk-size 32g`
+ `minikube start --cpus=5 --memory 8GiB --disk-size 32g`

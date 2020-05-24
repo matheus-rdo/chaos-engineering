@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productcatalogservice-v2
+spec:
+  selector:
+    matchLabels:
+      app: productcatalogservice
+  template:
+    metadata:
+      labels:
+        app: productcatalogservice
+        version: v2
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: server
+        image: mhraymundo/microservices-demo-product-catalog:slow
+        ports:
+        - containerPort: 3550
+        env:
+        - name: PORT
+          value: "3550"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: productcatalogservice
+  namespace: default
+spec:
+  hosts:
+    - productcatalogservice.default.svc.cluster.local
+  http:
+    - route:
+        - destination:
+            host: productcatalogservice.default.svc.cluster.local
+            subset: v1
+          weight: 90
+        - destination:
+            host: productcatalogservice.default.svc.cluster.local
+            subset: v2
+          weight: 10
+---
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: productcatalogservice
+  namespace: default
+spec:
+  host: productcatalogservice.default.svc.cluster.local
+  subsets:
+    - labels:
+        version: v1
+      name: v1
+    - labels:
+        version: v2
+      name: v2
+
