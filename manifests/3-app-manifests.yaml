@@ -159,14 +159,6 @@ spec:
         image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.2.0
         ports:
         - containerPort: 8080
-        readinessProbe:
-          periodSeconds: 5
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
-        livenessProbe:
-          periodSeconds: 5
-          exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
         env:
         - name: PORT
           value: "8080"
@@ -297,12 +289,12 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: gcr.io/google-samples/microservices-demo/paymentservice:v0.2.0
+        image: mhraymundo/microservices-demo-paymentservice:chaos
         ports:
         - containerPort: 50051
         env:
         - name: PORT
-          value: "50051"
+          value: "50051"  
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]

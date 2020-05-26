@@ -1,0 +1,13 @@
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: paymentservice
+  namespace: default
+spec:
+  host: paymentservice
+  trafficPolicy:
+    outlierDetection:
+      consecutive5xxErrors: 5
+      interval: 40s
+      baseEjectionTime: 1m
+      maxEjectionPercent: 100
