@@ -10,7 +10,9 @@ echo "> A cada $PERIOD segundos, um POD aleatório será deletado"
 
 while true; do
     sleep $PERIOD
-    randomPod=$(kubectl get pods -o custom-columns=:metadata.name | sed -r '/^\s*$/d' | shuf -n 1)
-    #TODO: Filtrar e deletar o POD
+    randomPod=$(#!/bin/bash
+        kubectl get pods -o custom-columns=POD:metadata.name,READY-true:status.containerStatuses[*].ready | grep "true,true" | shuf -n 1 | awk '{ print $1 }'
+    )
+    kubectl delete pod $randomPod --grace-period=0 > /dev/null
     echo "> $randomPod foi deletado"
 done
