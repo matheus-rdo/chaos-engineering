@@ -21,6 +21,14 @@ spec:
         env:
         - name: PORT
           value: "3550"
+        readinessProbe:
+          initialDelaySeconds: 15
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:3550"]
+        livenessProbe:
+          initialDelaySeconds: 15
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:3550"]    
         resources:
           requests:
             cpu: 100m
@@ -28,4 +36,3 @@ spec:
           limits:
             cpu: 200m
             memory: 128Mi
-
