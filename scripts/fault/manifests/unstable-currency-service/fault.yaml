@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: currencyservice
+spec:
+  selector:
+    matchLabels:
+      app: currencyservice
+  template:
+    metadata:
+      labels:
+        app: currencyservice
+        version: safe
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: mhraymundo/microservices-demo-currencyservice:chaos
+        imagePullPolicy: Always
+        ports:
+        - name: grpc
+          containerPort: 7000
+        env:
+        - name: PORT
+          value: "7000"
+        - name: FAULT_CHANCE
+          value: "20"
+        readinessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:7000"]
+        livenessProbe:
+          exec:
+            command: ["/bin/grpc_health_probe", "-addr=:7000"]
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi

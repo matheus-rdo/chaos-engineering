@@ -1,0 +1,15 @@
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: currencyservice
+  namespace: default
+spec:
+  hosts:
+    - currencyservice
+  http:
+    - route:
+        - destination:
+            host: currencyservice
+      retries:
+        attempts: 4
+        retryOn: gateway-error,connect-failure,refused-stream,internal
