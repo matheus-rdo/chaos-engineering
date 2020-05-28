@@ -3,6 +3,11 @@ kind: Deployment
 metadata:
   name: frontend
 spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 20%
   selector:
     matchLabels:
       app: frontend
@@ -18,6 +23,10 @@ spec:
           image: gcr.io/google-samples/microservices-demo/frontend:v0.2.0
           ports:
           - containerPort: 8080
+          lifecycle:
+              preStop:
+                exec:
+                  command: ["/bin/sh", "-c", "sleep 15"]
           readinessProbe:
             initialDelaySeconds: 10
             httpGet:
