@@ -7,7 +7,7 @@ spec:
   host: paymentservice
   trafficPolicy:
     outlierDetection:
-      consecutive5xxErrors: 5
-      interval: 40s
-      baseEjectionTime: 1m
+      consecutive5xxErrors: 2
+      interval: 1m
+      baseEjectionTime: 5m
       maxEjectionPercent: 100
